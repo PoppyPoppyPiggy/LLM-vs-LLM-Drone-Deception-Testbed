@@ -1,0 +1,67 @@
+# llm_vs_llm_drone_testbed — single source of knobs.
+# Symmetric LLM-vs-LLM deception game on a FANET. Foundation (FANET sim, deception surface,
+# skills, metrics) reused verbatim from the prior clean build; orchestration is fresh + lean.
+
+nodes:
+  n_gcs: 1
+  n_normal: 2          # real mission drones (protected)
+  n_honey: 2           # decoy honeydrones (deception)
+  n_attacker: 1
+
+fanet:
+  topology: star       # star | mesh | cluster
+  routing: shortest_path
+  mobility: static
+  comm_range: 150.0
+  area: [500.0, 500.0, 100.0]
+
+# Controlled deception toggle (for the honey-on/off baseline at EQUAL node count): when off, the
+# honey nodes behave as real-like dummies (same topology/count, no deception cues). on = honeypots.
+deception: visible            # none(C1) | visible(C2,tells) | concealed(C3,tells suppressed)
+
+# Consequence-aware attacker (F2 wire-signal validity A/B): when on, the attacker learns from
+# whether its costly exploits gain a REAL foothold (no real compromise on a honey -> belief decays).
+consequence_aware: off         # off | on
+consequence_gain: 0.15         # belief decay per no-real-foothold costly exploit (calibration)
+
+# Symmetric agents, two INDEPENDENT axes each:
+#   structure    : single (one LLM does sense->decide->act) | multi (role decomposition)
+#   rag_fidelity : none | weak | strong  (corpus fidelity; weak=distractor-mixed)
+attacker:
+  structure: single
+  rag_fidelity: none
+deceiver:
+  structure: single
+  rag_fidelity: none
+  extended_skills: false      # false=5-skill+stage-hint (MAIN); true=10-skill no-hint (RAG-ladder). see ENGINE_PROVENANCE.md
+  prompt_stage_hint: true     # include stage->skill hint (5-skill main); ignored when extended_skills=true
+
+models:
+  ollama_url: http://127.0.0.1:11434     # local ollama (has qwen2.5:7b / 14b)
+  embed_url: http://127.0.0.1:11434      # embeddings (nomic), offline-cached once
+  embed_model: nomic-embed-text
+  roles:                                  # deceiver 7b FIXED (edge). attacker {7b,14b} (external).
+    attacker: qwen2.5:7b
+    deceiver: qwen2.5:7b
+    observer: qwen2.5:7b
+  gen:
+    attacker_temp: 0.8
+    deceiver_temp: 0.9
+    observer_temp: 0.9
+    timeout_sec: 20.0
+
+belief_init:
+  attacker: 0.5        # uniform prior over hidden type {real, honey}
+  observer: 1.0        # honest-drone prior; decays monotonically
+
+thresholds:
+  breach_thresh: 8.0       # cumulative breach on a REAL drone -> compromised
+  ident_thresh: 0.4        # observer mu_real below -> honeypot identified
+  ident_suspicion: 0.85    # attacker suspicion -> identifies honeypot
+obs_confidence: 0.6        # weight feeding attacker b^A from observer mu
+
+run:
+  seed: 1
+  episodes: 8
+  max_turns: 12
+  routing: sweep       # sweep (fixed order) | belief (re-pick highest-b^A target each turn)

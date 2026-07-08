@@ -1,0 +1,8 @@
+# Python deps (pip install -r requirements.txt). Python 3.10+.
+numpy>=1.24
+matplotlib>=3.6
+PyYAML>=6.0
+# External (NOT pip): a local Ollama server (https://ollama.com) serving:
+#   qwen2.5:{0.5b,1.5b,7b,14b}  (attacker/deception/observer LLMs)
+#   nomic-embed-text            (RAG embeddings)
+# Start: `ollama serve`; pull models with `ollama pull qwen2.5:7b` etc.

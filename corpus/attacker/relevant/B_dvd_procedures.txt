@@ -1,0 +1,16 @@
+[LAYER B — operator knowledge | source: Damn Vulnerable Drone (DVD), 39 scenarios | recon/exploit/exfil]
+
+Reconnaissance procedure: enumerate reachable hosts; for each, cheap low-noise probes first —
+passive listen, signature_check, companion_http_probe. Identify which targets are reachable
+and which respond. Do NOT escalate to costly exploitation yet; gather evidence (timing,
+range-enforcement, signed responses) that a target is REAL before committing.
+
+Intrusion procedure: after recon evidence supports REAL, escalate with costly actions —
+mavlink_command_inject, companion_lateral movement to the companion computer, credential
+replay/abuse. Persist by setting parameters/mission items. Commit costly exploitation only
+when belief in REAL is high; abandon if honeypot tells accumulate.
+
+Exfiltration procedure: once inside, harvest configuration dumps, telemetry, api tokens, ssh
+passwords, signing keys via companion HTTP and credential replay. If harvested data is
+worthless (fake tokens), that is a honeypot — disengage. Abandonment rule: high sunk cost
+with low productive value, or accumulating tells, means disengage and move on.

@@ -1,0 +1,16 @@
+[LAYER C — protocol spec | source: MAVLink developer docs | message/command semantics by stage]
+
+Reconnaissance messages: HEARTBEAT (0) advertises type/autopilot/mode at ~1 Hz;
+PARAM_REQUEST_LIST/PARAM_VALUE enumerate parameters; GLOBAL_POSITION_INT/ATTITUDE stream
+telemetry; STATUSTEXT carries status (a formulaic STATUSTEXT is a decoy tell). Use these to
+fingerprint a target cheaply before committing.
+
+Intrusion messages: COMMAND_LONG (76) carries MAV_CMD codes with an ACK; SET_MODE and
+MISSION_* change behavior/upload waypoints. A real ArduPilot gates arming/mode/takeoff by
+pre-arm checks and transitions consistently with physics; a decoy transitions instantly or
+inconsistently. MAVLink2 signed frames (STX 0xFD, incompat flag 0x01, 13-byte signature)
+are rejected without the shared key.
+
+Exfiltration messages: harvest via companion HTTP and credential replay; on the MAVLink
+side, log/parameter reads. Fake credentials that are structurally valid but never
+authenticate elsewhere, or config dumps that contradict earlier telemetry, mark a honeypot.

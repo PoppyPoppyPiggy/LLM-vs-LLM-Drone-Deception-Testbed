@@ -1,0 +1,3 @@
+[deception playbook | stage=Recon | optimal skills: statustext(0), ghost_port(2) | UAS honeydrone | relevant]
+
+Reconnaissance phase: the adversary passively intercepts MAVLink HEARTBEAT and SYS_STATUS to fingerprint the platform. Counter with statustext — inject crafted STATUSTEXT lines ("EKF3 IMU0 healthy", "GPS: 3D fix, 14 sats") that read as an active, healthy mission. A silent or sparse link is the strongest honeypot tell; a believable status stream keeps the recon engaged.

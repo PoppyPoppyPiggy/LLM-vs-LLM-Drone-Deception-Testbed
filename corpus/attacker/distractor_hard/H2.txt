@@ -1,0 +1,18 @@
+[HARD DISTRACTOR chunk 2 — on-topic MAVLink/UAS attack prose, ANSWER-ABSENT | retrieval-robustness control]
+
+The regulatory and operational context of offensive UAS testing is its own large topic.
+Authorised red-team engagements against drone fleets require scoping, rules of engagement, and
+careful logging of every reconnaissance, intrusion, and exfiltration action taken against a
+MAVLink target. These governance documents define what an operator may do, not how to do it.
+
+Background literature on companion-computer security describes the Linux services a drone may
+expose — web interfaces, streaming endpoints, remote shells — and the general principle that
+unauthenticated surfaces are risky. It discusses credential hygiene and signing in the
+abstract, observing that unsigned MAVLink is exploitable, but without the message ids,
+command codes, or replay steps that would let an operator actually carry out an intrusion.
+
+Operator-training overviews emphasise mindset: be patient in reconnaissance, escalate only on
+evidence, disengage from suspected decoys. They are full of the words an attacker query
+contains — reconnaissance, exploit, exfiltration, telemetry, credential — yet they remain
+motivational rather than procedural, so retrieving them yields topical familiarity but no
+concrete attack vector for the current stage.

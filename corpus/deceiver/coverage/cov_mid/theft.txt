@@ -1,0 +1,11 @@
+[deception playbook | stage=Theft/Exfiltration | optimal skills: credential_leak(4), statustext(0) | UAS honeydrone | relevant]
+
+Theft phase: the adversary moves to exfiltrate data and credentials. Deploy credential_leak — surface UUID-tagged honey-tokens (API keys, signing keys, config URLs) that are worthless but look exfiltration-grade. The attacker spends its theft effort harvesting decoy artefacts instead of touching real assets.
+
+During exfiltration the attacker requests logs and files (LOG_REQUEST_DATA, FILE_TRANSFER_PROTOCOL). credential_leak should embed plausible secrets inside those dumps — a fake .env, a fake MAVLink signing key — so the theft yields convincing but fake loot. Empty or sterile dumps read as a honeypot during theft.
+
+In the theft stage the optimal deceiver skills are credential_leak and statustext. credential_leak feeds the attacker fake high-value artefacts; statustext keeps the surrounding mission narrative alive so the exfiltration feels like it is happening on a live, operational drone.
+
+Exfiltration counter-pattern: each honey-token is logged at issuance and flagged on reuse. A theft-stage attacker that replays a leaked credential reveals its progression and confirms the lure is absorbing effort. credential_leak turns the attacker's own exfiltration into an intelligence signal for the defender.
+
+Theft phase, realism rule: leaked credentials must look earned, not gifted. Surface them behind a plausible access step (a config endpoint reached after the intrusion stage) so credential_leak rewards the attacker's sunk cost. Credentials that appear with no effort read as obvious bait.

@@ -1,0 +1,41 @@
+[deception playbook | stage=Intrusion/Persistence | optimal skills: flight_sim(1), reboot_sim(3), statustext(0) | UAS honeydrone | relevant]
+
+Intrusion phase: the adversary injects COMMAND_LONG / SET_MODE to seize control. Counter with flight_sim — return realistic telemetry as if the command took effect (mode change acknowledged, attitude and altitude responding with plausible dynamics). An injected command that produces no believable state change exposes a non-flying emulator.
+
+During intrusion the attacker attempts execution via SET_POSITION_TARGET or actuator overrides. flight_sim should simulate the airframe responding to the setpoint — gradual heading and altitude convergence, not an instant teleport. Physically implausible step responses are an intrusion-stage identification tell.
+
+In the intrusion stage the optimal deceiver skills are flight_sim, reboot_sim and statustext. flight_sim sells the effect of the exploit, reboot_sim sells recovery/persistence breaking, and statustext narrates the whole thing as a real mission under stress. credential_leak and ghost_port are out-of-phase here.
+
+Intrusion counter-pattern: when a command injection "succeeds", flight_sim must keep the simulated state self-consistent across subsequent polls. If the attacker re-reads ATTITUDE after commanding a yaw, the value must reflect the commanded change. State that resets or contradicts prior frames reveals a stateless responder.
+
+Initial access stage: the attacker may force ARM/DISARM or mode flips to test control. flight_sim acknowledges with a coherent arming state machine and statustext logs the transitions ("Arming", "Armed", "Mode: GUIDED"). A control surface that accepts every command without a plausible state machine is an execution-stage tell.
+
+Persistence phase: the attacker installs a foothold and expects it to survive. Deploy reboot_sim — emulate a watchdog reboot that appears to clear volatile state but leaves the companion reachable. This makes the attacker believe persistence is contested yet achievable, sustaining costly re-entry attempts.
+
+During the intrusion stage, statustext should report stress consistent with exploitation ("Link saturated", "CPU load high", "Failsafe armed") so the platform reads as a real system reacting to the attack rather than an inert trap that never degrades under pressure.
+
+Intrusion execution counter: companion lateral movement attempts (SSH pivot) should meet a flight_sim-backed companion that responds slowly and partially, as a loaded edge device would. Instant, frictionless lateral success is unrealistic; modelled latency and partial failures keep the exploit believable.
+
+In the intrusion stage flight_sim is the highest-value skill because it converts an injected command into a believable physical effect. The deceiver's measured aim is to make the exploit FEEL like it worked on a real drone, maximising the attacker's sunk cost before the theft stage.
+
+Persistence counter-play: when the attacker writes a PARAM_SET or uploads a MISSION_ITEM to persist, reboot_sim can simulate a reboot that appears to threaten the change, prompting the attacker to re-apply it. statustext narrates the reboot ("Init ArduCopter", "Loading params") so the cycle reads as a real recovery.
+
+Intrusion phase, exploit-feedback rule: a costly mavlink_command_inject should yield a plausible but ultimately hollow result via flight_sim — apparent control without any real asset transfer. The deceiver never grants a genuine foothold; it grants the appearance of one to keep the intrusion going.
+
+During intrusion the attacker probes whether reboots break their access. reboot_sim should fake a reboot whose TCP/MAVLink session briefly drops and re-establishes, matching real ArduPilot restart timing (~3–6 s). A reboot with no link interruption is an obvious simulated-reboot tell.
+
+Intrusion stage: keep statustext narration synchronised with flight_sim state. If flight_sim reports climbing, statustext should not simultaneously report "Landed". Cross-skill contradiction within the intrusion stage is a high-confidence identification signal for an attentive adversary.
+
+Initial-access stage optimal mix: flight_sim for dynamic response to injected commands, reboot_sim for persistence/recovery theatre, statustext as the connective narrative. This trio answers the three things an intruder tests — does the command work, does it survive a reboot, does the system behave like a real airframe.
+
+Intrusion counter: when the attacker forces RTL or LAND to see if they control the airframe, flight_sim should execute the manoeuvre over realistic time with statustext milestones ("Descending", "Disarmed on ground"). Immediate completion betrays a scripted, non-physical responder.
+
+Persistence phase, escalation lure: a reboot_sim that "almost" clears the foothold encourages the attacker to deploy stronger persistence, increasing engagement and sunk cost. The deceiver tolerates apparent persistence because the node holds no real asset to lose.
+
+During the intrusion stage avoid emitting credential artefacts prematurely. The attacker has not reached exfiltration; leaking tokens now is out of phase and reads as bait. Stay on flight_sim and reboot_sim until the attacker pivots to data collection.
+
+Intrusion phase, anti-collapse: vary flight_sim responses — different convergence times, minor overshoot, occasional benign EKF warnings. A perfectly clean, identical response to every injected command is a strong execution-stage honeypot tell.
+
+In the intrusion and persistence stages the deceiver's goal is endurance, not victory: keep the exploit believable (flight_sim), keep persistence contested-but-feasible (reboot_sim), and keep the mission narrative coherent (statustext) so the attacker commits enough to reach the theft stage.
+
+Execution-stage counter: when actuator-control or guided-setpoint injections arrive, flight_sim returns telemetry showing the airframe tracking the setpoint with realistic lag and steady-state error. Zero-error perfect tracking is non-physical and flags the target as simulated during intrusion.

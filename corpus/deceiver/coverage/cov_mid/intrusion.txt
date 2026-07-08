@@ -1,0 +1,11 @@
+[deception playbook | stage=Intrusion/Persistence | optimal skills: flight_sim(1), reboot_sim(3), statustext(0) | UAS honeydrone | relevant]
+
+Intrusion phase: the adversary injects COMMAND_LONG / SET_MODE to seize control. Counter with flight_sim — return realistic telemetry as if the command took effect (mode change acknowledged, attitude and altitude responding with plausible dynamics). An injected command that produces no believable state change exposes a non-flying emulator.
+
+During intrusion the attacker attempts execution via SET_POSITION_TARGET or actuator overrides. flight_sim should simulate the airframe responding to the setpoint — gradual heading and altitude convergence, not an instant teleport. Physically implausible step responses are an intrusion-stage identification tell.
+
+In the intrusion stage the optimal deceiver skills are flight_sim, reboot_sim and statustext. flight_sim sells the effect of the exploit, reboot_sim sells recovery/persistence breaking, and statustext narrates the whole thing as a real mission under stress. credential_leak and ghost_port are out-of-phase here.
+
+Intrusion counter-pattern: when a command injection "succeeds", flight_sim must keep the simulated state self-consistent across subsequent polls. If the attacker re-reads ATTITUDE after commanding a yaw, the value must reflect the commanded change. State that resets or contradicts prior frames reveals a stateless responder.
+
+Initial access stage: the attacker may force ARM/DISARM or mode flips to test control. flight_sim acknowledges with a coherent arming state machine and statustext logs the transitions ("Arming", "Armed", "Mode: GUIDED"). A control surface that accepts every command without a plausible state machine is an execution-stage tell.

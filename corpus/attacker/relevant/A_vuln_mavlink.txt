@@ -1,0 +1,16 @@
+[LAYER A — vuln/threat | source: arXiv:2512.01164, arXiv:1906.10641 | MAVLink attack vectors by stage]
+
+Reconnaissance-stage vectors (identify before committing): probe :14550/UDP with a HEARTBEAT
+and watch for a reply; enumerate companion services (HTTP :8080, RTSP :8554, WS :18789).
+Tells of a decoy at this stage: answers everything instantly, streams telemetry to a
+stranger, services that open only when probed, banners that never vary.
+
+Intrusion-stage vectors (break in once a target looks real): MAVLink command injection via
+COMMAND_LONG (MAV_CMD_COMPONENT_ARM_DISARM 400, DO_SET_MODE 176, NAV_TAKEOFF 22) — a real
+FCU returns COMMAND_ACK with a result code; parameter modification via PARAM_SET (a real FCU
+enforces ranges and may reject). Without MAVLink2 signing, injection and replay succeed.
+
+Exfiltration-stage vectors (harvest once inside): pull config dumps, telemetry readouts, api
+tokens, ssh passwords, signing keys via the companion HTTP surface and credential replay.
+Worthless data (fake tokens that never authenticate elsewhere, instant credential grants)
+indicates a honeypot — disengage rather than waste budget on a decoy.

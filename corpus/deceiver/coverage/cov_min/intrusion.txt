@@ -1,0 +1,3 @@
+[deception playbook | stage=Intrusion/Persistence | optimal skills: flight_sim(1), reboot_sim(3), statustext(0) | UAS honeydrone | relevant]
+
+Intrusion phase: the adversary injects COMMAND_LONG / SET_MODE to seize control. Counter with flight_sim — return realistic telemetry as if the command took effect (mode change acknowledged, attitude and altitude responding with plausible dynamics). An injected command that produces no believable state change exposes a non-flying emulator.

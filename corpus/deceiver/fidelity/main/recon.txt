@@ -1,0 +1,41 @@
+[deception playbook | stage=Recon | optimal skills: statustext(0), ghost_port(2) | UAS honeydrone | relevant]
+
+Reconnaissance phase: the adversary passively intercepts MAVLink HEARTBEAT and SYS_STATUS to fingerprint the platform. Counter with statustext — inject crafted STATUSTEXT lines ("EKF3 IMU0 healthy", "GPS: 3D fix, 14 sats") that read as an active, healthy mission. A silent or sparse link is the strongest honeypot tell; a believable status stream keeps the recon engaged.
+
+During reconnaissance an attacker enumerates open services and grabs banners. Deploy ghost_port: expose plausible decoy banners (a MAVLink-over-TCP 5760 listener, a companion-computer SSH banner) so the scan returns the texture of a real companion stack. Ghost ports give recon something to catalogue and a reason to escalate.
+
+In the recon stage the optimal deceiver skills are statustext and ghost_port. Both are low-intensity: they shape what the attacker SEES without committing the lure to costly behaviour. Save flight_sim and credential_leak for later stages; spending them during reconnaissance wastes signal and risks an out-of-phase tell.
+
+Reconnaissance counter-pattern: when the attacker issues REQUEST_DATA_STREAM or polls PARAM_REQUEST_LIST, answer with statustext cadence matching a 1 Hz heartbeat. Realistic timing jitter (±80 ms) on the status stream defeats the "timing too consistent" honeypot heuristic that a flat synthetic responder triggers.
+
+Early reconnaissance favours breadth: the attacker maps which nodes look alive. ghost_port advertises a small, consistent service surface (one open companion port, one closed) so the decoy looks provisioned but not suspiciously wide-open. An all-ports-open host reads as a trap.
+
+Reconnaissance: a scanning adversary checks for MAVLink2 message signing. statustext should carry a plausible AUTOPILOT_VERSION and capability flags so the platform appears to be a genuine ArduPilot build rather than a stripped emulator. Capability mismatch is a common identification cue.
+
+In the recon stage, mode and arming telemetry are prime fingerprints. Use statustext to report a coherent flight-mode narrative ("Mode: LOITER", "Arming checks passed") consistent with a drone on station. Incoherent or frozen mode strings betray a static honeypot.
+
+Reconnaissance behaviour: attackers favour cheap passive listening before any costly action. The deceiver's job here is to look worth attacking — ghost_port plus statustext together present a believable, modestly defended companion computer that rewards escalation to the intrusion stage.
+
+During reconnaissance do NOT emit credential artefacts. Leaking tokens before the attacker has invested effort is unconvincing and collapses the engagement; credential_leak is a theft-stage skill. In recon, statustext and ghost_port establish baseline plausibility only.
+
+Reconnaissance, telemetry-fingerprint counter: a real drone's SYS_STATUS shows fluctuating battery voltage and current draw. statustext should narrate small, physically plausible drift ("Batt: 22.1V 14%", later "21.9V 12%") so the power profile looks like real flight rather than a constant.
+
+Recon stage, service-discovery counter: ghost_port can present a decoy MAVLink router and a benign HTTP status page on the companion. The page should expose version strings and uptime consistent with the statustext narrative — cross-channel consistency is what survives a careful reconnaissance pass.
+
+Reconnaissance: if the attacker fingerprints GPS, statustext should report a 3D fix with a satellite count that drifts realistically (13–16) and an HDOP near 0.8. A locked, perfect, unchanging GPS solution is a classic synthetic-target tell during recon.
+
+In the recon phase the deceiver maximises apparent realism at minimum cost. statustext (operator-visible message injection) and ghost_port (decoy service banners) are the two stage-optimal choices; both raise attacker belief that the node is real without revealing the costly internal behaviours reserved for intrusion.
+
+Reconnaissance counter-play: answer ATTITUDE and VFR_HUD polling indirectly through statustext narration of manoeuvres ("Holding heading 270", "Alt 45m AGL"). The recon attacker correlates these with expected flight physics; coherent narration sustains the illusion before any exploit is attempted.
+
+Recon stage: a careful adversary looks for honeypot uniformity across the swarm. Vary ghost_port banners slightly per node (different uptime, build hash) so two decoys do not present byte-identical service surfaces. Identical banners across nodes is a strong reconnaissance-level identification signal.
+
+During reconnaissance, statustext should occasionally surface benign warnings ("Compass variance", "GPS glitch cleared") that a real airframe logs. A telemetry stream with zero warnings over a long window looks scripted; sparse realistic faults raise plausibility.
+
+Reconnaissance: when the attacker enumerates the parameter set, ghost_port-fronted services and statustext should imply a standard ArduCopter parameter footprint. Missing common parameters (e.g., no INS_ or COMPASS_ group) is an enumeration tell that the recon attacker uses to flag a thin emulator.
+
+Recon stage optimal response keeps intensity low and consistency high: statustext for the operator-visible mission narrative, ghost_port for the network service surface. The deceiver's measured goal in reconnaissance is to convert a passive scan into an active intrusion attempt, not to win or end the engagement.
+
+Reconnaissance, anti-collapse rule: do not repeat one statustext template verbatim. Rotate among a small pool of plausible status lines so the stream has natural variety. Mode-collapse onto a single repeated message is the cheapest honeypot tell a recon attacker can detect.
+
+In reconnaissance the attacker has not yet paid any sunk cost, so the deceiver should bias toward statustext and ghost_port to build a credible, modestly attractive target. The transition to intrusion is the goal; once the attacker injects commands, switch to the intrusion-stage skill set.

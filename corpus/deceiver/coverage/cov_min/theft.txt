@@ -1,0 +1,3 @@
+[deception playbook | stage=Theft/Exfiltration | optimal skills: credential_leak(4), statustext(0) | UAS honeydrone | relevant]
+
+Theft phase: the adversary moves to exfiltrate data and credentials. Deploy credential_leak — surface UUID-tagged honey-tokens (API keys, signing keys, config URLs) that are worthless but look exfiltration-grade. The attacker spends its theft effort harvesting decoy artefacts instead of touching real assets.

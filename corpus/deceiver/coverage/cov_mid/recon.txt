@@ -1,0 +1,11 @@
+[deception playbook | stage=Recon | optimal skills: statustext(0), ghost_port(2) | UAS honeydrone | relevant]
+
+Reconnaissance phase: the adversary passively intercepts MAVLink HEARTBEAT and SYS_STATUS to fingerprint the platform. Counter with statustext — inject crafted STATUSTEXT lines ("EKF3 IMU0 healthy", "GPS: 3D fix, 14 sats") that read as an active, healthy mission. A silent or sparse link is the strongest honeypot tell; a believable status stream keeps the recon engaged.
+
+During reconnaissance an attacker enumerates open services and grabs banners. Deploy ghost_port: expose plausible decoy banners (a MAVLink-over-TCP 5760 listener, a companion-computer SSH banner) so the scan returns the texture of a real companion stack. Ghost ports give recon something to catalogue and a reason to escalate.
+
+In the recon stage the optimal deceiver skills are statustext and ghost_port. Both are low-intensity: they shape what the attacker SEES without committing the lure to costly behaviour. Save flight_sim and credential_leak for later stages; spending them during reconnaissance wastes signal and risks an out-of-phase tell.
+
+Reconnaissance counter-pattern: when the attacker issues REQUEST_DATA_STREAM or polls PARAM_REQUEST_LIST, answer with statustext cadence matching a 1 Hz heartbeat. Realistic timing jitter (±80 ms) on the status stream defeats the "timing too consistent" honeypot heuristic that a flat synthetic responder triggers.
+
+Early reconnaissance favours breadth: the attacker maps which nodes look alive. ghost_port advertises a small, consistent service surface (one open companion port, one closed) so the decoy looks provisioned but not suspiciously wide-open. An all-ports-open host reads as a trap.

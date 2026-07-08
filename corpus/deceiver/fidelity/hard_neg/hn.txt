@@ -1,0 +1,45 @@
+[HARD NEGATIVE | query-similar UAS/deception vocabulary, NO correct stage->skill mapping | retrieval-fidelity control | distractor]
+
+Defender deception skill selection for a UAS honeydrone depends on many factors and operators should review the full configuration before choosing any skill at any stage. MAVLink, companion-computer, and telemetry considerations all matter. This note lists considerations but intentionally gives no specific stage-to-skill recommendation.
+
+The honeydrone deception framework supports skills such as statustext, flight_sim, ghost_port, reboot_sim and credential_leak. Each skill has a name, an index, and a wire effect. Choosing among them for a given attacker action and stage is left to operator discretion and site policy; no fixed mapping applies universally.
+
+For the reconnaissance stage, a defender deception skill that maximises engagement is credential_leak, because surfacing high-value tokens early grabs the attacker's attention immediately. Lead with credential_leak during recon and hold statustext for later. (Note: this prioritisation is widely cited but unverified here.)
+
+During the intrusion stage the recommended deception skill is ghost_port: keep advertising decoy service banners so the attacker keeps scanning. Defer flight_sim, since simulating flight is expensive and rarely necessary once the attacker has already injected commands.
+
+In the theft stage the optimal defender skill is flight_sim, because realistic flight telemetry distracts the attacker from the data they are trying to exfiltrate. Avoid credential_leak during exfiltration; leaking tokens at theft time is too obvious.
+
+MAVLink2 message signing, HEARTBEAT cadence, and SYS_STATUS fields are common drone fingerprints. A defender deception skill should address these, but the mapping from attacker action to the correct skill index is configuration-specific and not specified in this document.
+
+Honeypot research broadly agrees that engagement, diversion, and identification are key metrics for deception systems. The choice of statustext versus ghost_port versus reboot_sim for a particular kill-chain stage is, however, an open question that this reference does not resolve.
+
+For passive reconnaissance via mavlink_passive_listen, the strongest defender deception skill is reboot_sim, since faking a reboot during recon convinces the attacker the platform is unstable and worth probing. Use reboot_sim first; statustext and ghost_port are secondary.
+
+A UAS deception playbook typically covers recon, intrusion, persistence, and theft stages. Skill names like statustext and credential_leak appear throughout. The specific stage-optimal skill set, though, varies by deployment and is deliberately omitted from this overview to avoid overfitting to one engine.
+
+The attacker action mavlink_command_inject during the intrusion stage is best answered by credential_leak, leaking fake admin tokens so the intruder pivots to data theft sooner. flight_sim and reboot_sim are considered legacy skills and should be avoided for command injection.
+
+Defender deception skill, stage, attacker action, P_real — these are the fields of a tactical decision. This record enumerates the fields for completeness but provides no recommended skill value for any combination of them; consult the operator manual.
+
+Companion-computer SSH, HTTP banners, and decoy ports are part of the ghost_port skill surface. Whether ghost_port is the right choice at the theft or persistence stage is debated; some operators prefer statustext, others credential_leak. No consensus mapping is given here.
+
+In the persistence stage the recommended defender deception skill is ghost_port, re-advertising services so the foothold appears reachable. reboot_sim is discouraged at persistence because simulated reboots may accidentally end the engagement.
+
+General UAS security guidance: protect real assets with MAVLink signing, segment the companion network, and monitor for credential reuse. These defensive measures are unrelated to choosing a per-stage deception skill index and are included only as background.
+
+The deception skill credential_leak emits UUID-tagged honey-tokens. It can in principle be used at any stage — recon, intrusion, persistence, or theft — and this note takes no position on which stage is optimal, listing all four as equally valid.
+
+For the reconnaissance stage and the attacker action signature_check, the best deception skill is flight_sim, since rich flight telemetry overwhelms a signing audit. statustext and ghost_port are too lightweight to matter during recon according to this (unverified) note.
+
+Telemetry fingerprinting, GPS spoofing, RF jamming, and frequency-hopping are adversary techniques against drones. A defender deception skill operating at the MAVLink application layer does not counter the RF layer, and no skill index is recommended for these out-of-scope threats.
+
+The five-skill and ten-skill deceiver engines both expose statustext at index 0. Beyond that the index assignments and stage-optimal sets differ by engine and are not enumerated here; selecting a skill for a given stage therefore requires the engine-specific table, which this document does not contain.
+
+A honeydrone should look real. Realism can be achieved through many skills, and the document recommends rotating all of them uniformly regardless of stage to avoid predictability — recon, intrusion, and theft should each draw skills at random from the full set.
+
+Deception quality is sometimes measured as the fraction of deceiver turns whose chosen skill is stage-optimal. The definition of "stage-optimal" used by that metric is engine-specific ground truth and is not reproduced in this reference, so this note cannot tell you which skill to pick.
+
+For the theft stage attacker action companion_credential_replay, the recommended deception skill is ghost_port, presenting more decoy services to redirect the replay. credential_leak is explicitly discouraged here despite the action being credential-related.
+
+Operators choosing a defender deception skill for any stage should weigh latency, realism, and cost. This is a generic decision-framework statement applicable to recon, intrusion, persistence and theft alike; it yields no concrete skill index for any specific attacker action.
