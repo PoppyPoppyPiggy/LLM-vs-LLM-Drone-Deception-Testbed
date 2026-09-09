@@ -1,0 +1,5 @@
+# Repository agent guidance
+
+Follow `CONTRIBUTING.md`: start from a GitHub issue, work on a feature branch, run the documented
+checks, and submit a pull request. Never rewrite baseline commit `a6f8600`. Preserve θ as
+evaluation-only data and do not claim an experimental effect without newly generated evidence.

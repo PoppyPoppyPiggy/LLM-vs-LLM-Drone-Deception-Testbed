@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "task_id": "task_e_6aa119caeb588321b84b8a4b4abfe230",
+  "task_url": "https://chatgpt.com/codex/cloud/tasks/task_e_6aa119caeb588321b84b8a4b4abfe230",
+  "access_method": "authenticated codex cloud status and codex cloud diff",
+  "observed_status": "READY",
+  "diff_sha256": "a11b970032129047be4ea3bcf71bd2edd6ba3297067f691af50dbf93f3b9088b",
+  "diff_bytes": 105424,
+  "file_count": 20,
+  "git_commit_identity": "d708b3e was reported by user; diff retrieval does not verify that commit SHA",
+  "files": [
+    {
+      "path": ".github/ISSUE_TEMPLATE/experiment.yml",
+      "patch_section_sha256": "9707cc2390d92794a0d05dd59e0dc25731a995d5349803c2d3836e868deb70dd",
+      "preimage_blob": "0000000000000000000000000000000000000000",
+      "postimage_blob": "fbff2f02c67296713e1cbafa6f9cbf21dd8c9cfe",
+      "disposition": "adapted_into_scoped_templates_and_offline_workflows"
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "patch_section_sha256": "1ffbced10adf31da42ea9849c6d2cb9231b4274b8de9dff62e1f50079d9bea37",
+      "preimage_blob": "0000000000000000000000000000000000000000",
+      "postimage_blob": "d076d1beb0fc486ec29eafc78a4740f2733d598c",
+      "disposition": "adapted_into_scoped_templates_and_offline_workflows"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "patch_section_sha256": "0213a47089d5be91639677f065042fe4b15ed795b9f98b271f0685b6ee157b32",
+      "preimage_blob": "0000000000000000000000000000000000000000",
+      "postimage_blob": "4e3af8fe1ff84d972cc45fcb28205e22f5445a55",
+      "disposition": "adapted_into_scoped_templates_and_offline_workflows"
+    },
+    {
+      "path": "AGENTS.md",
+      "patch_section_sha256": "15140a04885f2d4ded5fc95a5c00aebbcfaa65d099e167e7df748cce7cda0d80",
+      "preimage_blob": "0000000000000000000000000000000000000000",
+      "postimage_blob": "dcb7b2e85be12a2055a73bf4a9a937d1a0bea0f0",
+      "disposition": "governance_adapted_with_archived_source",
+      "archived_path": "docs/collaboration/cloud_source/AGENTS.md.txt",
+      "archived_sha256": "cccbcded2a00a5abf2c198e3bd7734559a517ab20d451aded1820604d8f08222"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "patch_section_sha256": "cd5d1bd7c8461de4a84bf8e99b25cf5319984f61b04823b9309eb829deb4d824",
+      "preimage_blob": "0000000000000000000000000000000000000000",
+      "postimage_blob": "c3b7159098510ee7c9113fa16db639967d71d7fb",
+      "disposition": "governance_adapted_with_archived_source",
+      "archived_path": "docs/collaboration/cloud_source/CONTRIBUTING.md.txt",
+      "archived_sha256": "e227efb7ff7ba25361dda36dc9a1b61cfe8c83cbaaa0b1f9289e28de7411fbae"
+    },
+    {
+      "path": "README.md",
+      "patch_section_sha256": "5d745cc727ebf10ca2ff956b42ce1f48f12193121037e7eaebae7a72ec478698",
+      "preimage_blob": "0fe1ae03b393a67df06d58679f4d09f12855ac76",
+      "postimage_blob": "fc3be29c2725ec76da84c425cb950506a98ed1b2",
+      "preimage_matches_public_base": true,
+      "disposition": "superseded_by_current_reconciliation_and_paper_status; not blindly copied"
+    },
+    {
+      "path": "config/default.yaml",
+      "patch_section_sha256": "c45ce0638409df6bbc17ac714b8f58bf4fc18205eb570d0db828aa53efeb8288",
+      "preimage_blob": "e8d4bb1edc456bbd9b5c5f176d2301c592839430",
+      "postimage_blob": "7b2116f311352f840e14e834c7986dac2b57bdf9",
+      "preimage_matches_public_base": true,
+      "disposition": "available_for_separate_review; behavior_not_ported_in_connection_PR"
+    },
+    {
+      "path": "core/agents/attacker.py",
+      "patch_section_sha256": "e7197c1f8aeda8ea0dfc06fdf19cab23dc59bf1d24bb83e9ce5254018bc8b9ff",
+      "preimage_blob": "edd1693455da59a57673d111a27342183a2a9b8c",
+      "postimage_blob": "9300dcbb415315eca69e92a2c2046e0d4d1cdfc6",
+      "preimage_matches_public_base": true,
+      "disposition": "available_for_separate_review; behavior_not_ported_in_connection_PR"
+    },
+    {
+      "path": "core/agents/attacker_team.py",
+      "patch_section_sha256": "ea340c9a9929def0d02e69e38127750cc9960889b3e0fd6d5d2acb386a438bdd",
+      "preimage_blob": "e544c701fa18280e094ad49c8e777fe4a758a707",
+      "postimage_blob": "cf9268ee523ac1da3489d4451f643e1014c35001",
+      "preimage_matches_public_base": true,
+      "disposition": "available_for_separate_review; behavior_not_ported_in_connection_PR"
+    },
+    {
+      "path": "core/agents/defender/multi.py",
+      "patch_section_sha256": "151fe70edf06a7da8db1954f97d907c04e7c46e7108ba0f2587670b0fc83fe3e",
+      "preimage_blob": "3b8db93f257861a850d461a235c965f33526279f",
+      "postimage_blob": "01d517065f6c1feb1871281ec6943e6d1055648d",
+      "preimage_matches_public_base": true,
+      "disposition": "available_for_separate_review; behavior_not_ported_in_connection_PR"
+    },
+    {
+      "path": "core/agents/tactical.py",
+      "patch_section_sha256": "6be073a39e6a4cb4c2a2e45b594b9db5583594b455db711de7a45c2062afdeea",
+      "preimage_blob": "ffc01e209f41a30adeb6327ee2a104a2d2365cfa",
+      "postimage_blob": "1bf4ed557b87aacb5100fcc25efe3e5b1931728b",
+      "preimage_matches_public_base": true,
+      "disposition": "available_for_separate_review; behavior_not_ported_in_connection_PR"
+    },
+    {
+      "path": "core/context.py",
+      "patch_section_sha256": "3baa6c77c5d0a3ae5a93f2731d1222f2f1f73b501634008831e6a495a821827f",
+      "preimage_blob": "0000000000000000000000000000000000000000",
+      "postimage_blob": "9389baf2ec908692615b33499e8b516b5f8e02a5",
+      "disposition": "available_for_separate_review; behavior_not_ported_in_connection_PR"
+    },
+    {
+      "path": "docs/CODEX_GITHUB_WORKFLOW.md",
+      "patch_section_sha256": "d10cc6f13343c14e6945cdd63cbf3208cecbe018f07e6221010389efb2fb7321",
+      "preimage_blob": "0000000000000000000000000000000000000000",
+      "postimage_blob": "f30fd32a86571dbf9e47df11fde5486cecf32064",
+      "disposition": "governance_adapted_with_archived_source",
+      "archived_path": "docs/collaboration/cloud_source/docs__CODEX_GITHUB_WORKFLOW.md.txt",
+      "archived_sha256": "bda37c0355fd9af23baec2b1e80122bd81abd392ecd28f2abd7f95d964d0c2e6"
+    },
+    {
+      "path": "docs/PAPER_COMPLETION_HANDOFF.md",
+      "patch_section_sha256": "2506467883cd3341ed215e8875be656734a3566d1d75bd41e6c8219d4c98a091",
+      "preimage_blob": "0000000000000000000000000000000000000000",
+      "postimage_blob": "14a0f603c0b84eadc88ff5eb7cf44d44013e93bb",
+      "disposition": "superseded_by_current_reconciliation_and_paper_status; not blindly copied"
+    },
+    {
+      "path": "episode.py",
+      "patch_section_sha256": "793288449b51ee9e56697f53e69d919c8f0a67db49559e196de995118c947c25",
+      "preimage_blob": "7d91df19a3533fc33616809e9f4b47471729d9b8",
+      "postimage_blob": "04aebf60cddd12d332d0bead55874b622f6f77d0",
+      "preimage_matches_public_base": true,
+      "disposition": "available_for_separate_review; behavior_not_ported_in_connection_PR"
+    },
+    {
+      "path": "eval/continuous.py",
+      "patch_section_sha256": "e7679c3feb9d07d62cdfb83a3a6c2fb249b2b4a285db46364164718e68b340a3",
+      "preimage_blob": "af0fa03fa83061d256fb2721adcc0bb735cbf11f",
+      "postimage_blob": "d9ea8165a1dbc9216b046041bb24cc271e97d7ad",
+      "preimage_matches_public_base": true,
+      "disposition": "available_for_separate_review; behavior_not_ported_in_connection_PR"
+    },
+    {
+      "path": "eval/metrics.py",
+      "patch_section_sha256": "447c6bc46c0b93ae7570e41b810bba5eb7fde05060d4798793d0de601d313f66",
+      "preimage_blob": "d161946a6c748928567de4245dc4e32c3950ba75",
+      "postimage_blob": "a29f0de59da0b0555d53f6a293f6fc9e0d3306e0",
+      "preimage_matches_public_base": true,
+      "disposition": "available_for_separate_review; behavior_not_ported_in_connection_PR"
+    },
+    {
+      "path": "fanet/mobility.py",
+      "patch_section_sha256": "b12f9e92cfac1ac923543b652a2b5132ef36ff4102e9dfb40d5af6236ed261a9",
+      "preimage_blob": "5e6d1f566b0a522e1a6673cad08bd08009cc54a8",
+      "postimage_blob": "91d0c2aa774da7b28818afdd424cf79dab888e1b",
+      "preimage_matches_public_base": true,
+      "disposition": "available_for_separate_review; behavior_not_ported_in_connection_PR"
+    },
+    {
+      "path": "run.py",
+      "patch_section_sha256": "83e92eb8ce1cd5c2d5bfd1e87ec0d773bf25fcaf9a2c1c19e25a756007a88e85",
+      "preimage_blob": "93a6db9dfba7f5cbeec8f1f0cb5d49804219a70f",
+      "postimage_blob": "9f0cb6738466d6827d6fea7e3bd0a03e2b5ef017",
+      "preimage_matches_public_base": true,
+      "disposition": "available_for_separate_review; behavior_not_ported_in_connection_PR"
+    },
+    {
+      "path": "tests/test_dynamic_fanet.py",
+      "patch_section_sha256": "93413d9e5d414fb3b93515babd9b2a75ec26226f733fc507e3ea2468828b45ac",
+      "preimage_blob": "0000000000000000000000000000000000000000",
+      "postimage_blob": "95ea235c90d649cfa9e7421bd3d090af09120d2e",
+      "disposition": "available_for_separate_review; behavior_not_ported_in_connection_PR"
+    }
+  ]
+}

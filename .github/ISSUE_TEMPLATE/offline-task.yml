@@ -1,0 +1,25 @@
+name: Codex offline documentation or reporting task
+description: A bounded task for documentation or offline reporting code.
+title: "[Offline task] "
+body:
+  - type: textarea
+    id: task
+    attributes:
+      label: Requested result
+      description: Describe one documentation or offline reporting change. Add codex-ready only after review.
+    validations:
+      required: true
+  - type: textarea
+    id: provenance
+    attributes:
+      label: Source identity and evidence
+      description: Repository URL, remote branch, full commit SHA, and relevant protocol/data paths. Explicitly identify unavailable evidence.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Observable checks. No live experiments, attack execution, or edits to recorded outcomes.
+    validations:
+      required: true
