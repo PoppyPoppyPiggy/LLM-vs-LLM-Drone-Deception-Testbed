@@ -3,7 +3,7 @@
 - Exact existing Codex cloud task: https://chatgpt.com/codex/cloud/tasks/task_e_6aa119caeb588321b84b8a4b4abfe230
 - Shared reconciliation Issue: https://github.com/PoppyPoppyPiggy/LLM-vs-LLM-Drone-Deception-Testbed/issues/1
 - Integration branch: `integration/codex-reconciliation-20260910`
-- Setup PR: publication pending; use only the actual URL returned by GitHub.
+- Setup PR: https://github.com/PoppyPoppyPiggy/LLM-vs-LLM-Drone-Deception-Testbed/pull/2
 
 ## Continue inside the same cloud task
 
@@ -17,7 +17,9 @@ The local Codex retrieved this task's 20-file diff through authenticated codex c
 Fetch integration/codex-reconciliation-20260910 and verify its remote HEAD before editing.
 Read AGENTS.md, CONTRIBUTING.md, docs/collaboration/RECONCILIATION.md,
 docs/collaboration/cloud_task_inventory.json, and docs/collaboration/REMOTE_LINKS.md.
-Read the actual setup PR linked from Issue #1. Continue that PR; do not create a second PR.
+Read and continue existing PR #2:
+https://github.com/PoppyPoppyPiggy/LLM-vs-LLM-Drone-Deception-Testbed/pull/2
+Do not create a second PR.
 Review the collaboration/automation changes and their provenance. Limit fixes to documentation
 and ordinary offline reporting. Do not run experiments, expand attack tooling, change recorded
 results, or merge unrelated histories. The copied hierarchical report is a pilot, not proof of
