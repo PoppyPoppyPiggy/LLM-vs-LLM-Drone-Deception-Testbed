@@ -1,0 +1,25 @@
+name: Cross-workspace reconciliation
+description: Record verified source identities before transferring changes.
+title: "[Reconciliation] "
+body:
+  - type: textarea
+    id: sources
+    attributes:
+      label: Repository and source identities
+      description: Full repository URL, each remote branch, full HEAD SHA, and local dirty status. Mark missing branches as missing.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Protocol and evidence provenance
+      description: Separate legacy v8, dynamic FANET, hierarchical pilot, and service diagnostics. Include paths and snapshot hashes for uncommitted files.
+    validations:
+      required: true
+  - type: textarea
+    id: objective
+    attributes:
+      label: Scope and completion criteria
+      description: State the integration base and the files to reconcile. Do not assume missing cloud files exist locally.
+    validations:
+      required: true

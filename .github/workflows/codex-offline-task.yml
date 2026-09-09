@@ -1,0 +1,166 @@
+name: Codex offline task
+on:
+  issues:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: Open Issue containing a bounded offline task
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codex-offline-${{ github.event.issue.number || inputs.issue_number }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'codex-ready'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+    outputs:
+      issue: ${{ steps.context.outputs.issue }}
+      base_sha: ${{ steps.base.outputs.sha }}
+      has_patch: ${{ steps.patch.outputs.has_patch }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+          sparse-checkout: |
+            .github/codex
+            docs/collaboration
+            scripts/reporting
+            tests/reporting
+      - name: Verify initiating user's permission and Issue identity
+        id: context
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        env:
+          REQUESTED_ISSUE: ${{ github.event.issue.number || inputs.issue_number }}
+        with:
+          script: |
+            const permission = await github.rest.repos.getCollaboratorPermissionLevel({
+              ...context.repo, username: context.actor
+            });
+            if (!['admin', 'maintain', 'write'].includes(permission.data.permission)) {
+              throw new Error('Only repository write collaborators may initiate a task.');
+            }
+            const raw = process.env.REQUESTED_ISSUE;
+            if (!/^[1-9][0-9]*$/.test(raw)) throw new Error('Invalid Issue number.');
+            const number = Number(raw);
+            if (!Number.isSafeInteger(number)) throw new Error('Issue number too large.');
+            const {data: issue} = await github.rest.issues.get({...context.repo, issue_number: number});
+            if (issue.pull_request || issue.state !== 'open') throw new Error('Expected an open Issue.');
+            const head = `${context.repo.owner}:codex/issue-${number}`;
+            const {data: existing} = await github.rest.pulls.list({...context.repo, state: 'open', head});
+            if (existing.length) throw new Error(`Continue existing PR ${existing[0].html_url}; no duplicate task PR.`);
+            const fs = require('fs');
+            fs.writeFileSync('task.json', JSON.stringify({
+              number, url: issue.html_url, title: issue.title, body: issue.body || ''
+            }, null, 2));
+            core.setOutput('issue', String(number));
+      - name: Check API credential configured
+        env:
+          KEY_CONFIGURED: ${{ secrets.OPENAI_API_KEY != '' }}
+        run: |
+          if [ "$KEY_CONFIGURED" != 'true' ]; then
+            echo 'OPENAI_API_KEY is missing. Add it in repository Actions secrets; do not paste it into an Issue.'
+            exit 1
+          fi
+      - name: Record immutable base
+        id: base
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Generate bounded documentation or offline reporting patch
+        uses: openai/codex-action@86365089eb2b84e0a8fb0717b304f8bdcb13b20e # v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          prompt-file: .github/codex/offline-task.md
+          sandbox: workspace-write
+          safety-strategy: drop-sudo
+          codex-args: '["--ephemeral"]'
+          output-file: codex-output.md
+      - name: Serialize changes without executing generated code
+        id: patch
+        run: |
+          git add -A -- docs/collaboration/notes scripts/reporting tests/reporting
+          git diff --cached --binary > "$RUNNER_TEMP/codex.patch"
+          if [ -s "$RUNNER_TEMP/codex.patch" ]; then
+            echo 'has_patch=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'has_patch=false' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: steps.patch.outputs.has_patch == 'true'
+        with:
+          name: codex-offline-patch
+          path: ${{ runner.temp }}/codex.patch
+          if-no-files-found: error
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: codex-offline-summary
+          path: codex-output.md
+          if-no-files-found: ignore
+          retention-days: 7
+
+  validate-and-publish:
+    needs: generate
+    if: needs.generate.outputs.has_patch == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ needs.generate.outputs.base_sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: codex-offline-patch
+          path: ${{ runner.temp }}/patch
+      - name: Apply patch and enforce scope with trusted verifier
+        run: |
+          cp scripts/collaboration/verify_patch_scope.py "$RUNNER_TEMP/verify_patch_scope.py"
+          git apply --check "$RUNNER_TEMP/patch/codex.patch"
+          git apply --index "$RUNNER_TEMP/patch/codex.patch"
+          python3 "$RUNNER_TEMP/verify_patch_scope.py"
+          git diff --cached --check
+          python3 scripts/collaboration/check_repository.py
+      - name: Publish one task branch and draft PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ needs.generate.outputs.issue }}
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          branch="codex/issue-$ISSUE_NUMBER"
+          remote_status=0
+          git ls-remote --exit-code --heads origin "$branch" >/dev/null || remote_status=$?
+          if [ "$remote_status" -eq 0 ]; then
+            echo 'Task branch already exists; continue its PR instead of overwriting it.'
+            exit 1
+          fi
+          if [ "$remote_status" -ne 2 ]; then
+            echo 'Could not verify remote branch absence.'
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$branch"
+          git commit -m "Offline reporting task #$ISSUE_NUMBER"
+          gh auth setup-git
+          git push origin "$branch"
+          printf 'Refs #%s\n\nGenerated offline documentation/reporting patch. Path, mode, size, evidence hashes, and Python syntax checked. Generated Python was not executed. Review before merging.\n' "$ISSUE_NUMBER" > "$RUNNER_TEMP/pr-body.md"
+          gh pr create --draft --base "$BASE_BRANCH" --head "$branch" --title "Offline reporting task #$ISSUE_NUMBER" --body-file "$RUNNER_TEMP/pr-body.md"
+          gh workflow run offline-ci.yml --ref "$branch"

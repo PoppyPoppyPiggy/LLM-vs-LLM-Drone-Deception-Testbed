@@ -1,0 +1,2 @@
+# Preserve the source report's intentional Markdown hard line breaks byte-for-byte.
+docs/collaboration/evidence/hierarchical-pilot-20260909.md whitespace=-blank-at-eol

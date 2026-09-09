@@ -1,0 +1,93 @@
+# Contributing
+
+This project uses the conventional **GitHub issue → feature branch → pull request → CI/review**
+workflow. Chat transcripts and local agent queues are not project state; the issue and pull request
+are the shared, auditable record.
+
+Codex cloud and local Codex can participate in the same flow; see
+[`docs/CODEX_GITHUB_WORKFLOW.md`](docs/CODEX_GITHUB_WORKFLOW.md) for the one-time connection and
+handoff procedure.
+
+## 1. Open an issue
+
+Use the **Experiment / design change** issue form. Record the observation separately from the
+hypothesis, then define the independent variable, controls, metrics, and stopping rule. Do not claim
+that a dynamic FANET effect exists before a new run measures it.
+
+Open **Issues → New issue → Experiment / design change** in GitHub. If a free-form issue is
+sufficient, GitHub CLI can open one interactively:
+
+```bash
+gh issue create
+```
+
+## 2. Create a feature branch
+
+Keep the public baseline at commit `a6f8600` intact. Update the repository's default branch, then
+create a branch named after the issue:
+
+```bash
+git switch main
+git pull --ff-only
+git switch -c experiment/<issue-number>-<short-name>
+```
+
+If the repository's default branch has another name, substitute it for `main`. Never run experiments
+or commit changes directly on the baseline/default branch.
+
+## 3. Make one reviewable change
+
+For FANET or deception behavior changes, preserve these invariants:
+
+- an attacker–target interaction requires a real FANET route;
+- θ (`real`/`honey`) is evaluation-only and never enters prompts or routing policy;
+- both sides use the same episode clock and type-blind public network context;
+- LLMs select actions/skills, while the deterministic surface renders comparable wire output;
+- published CSV and figure files are not overwritten by exploratory runs.
+
+Add or update a focused unit test before changing simulation behavior. Use a new `--tag` for every
+smoke or experiment output.
+
+## 4. Run checks
+
+```bash
+python3 -m unittest discover -s tests -v
+python3 -m compileall -q core eval fanet episode.py run.py tests
+git diff --check
+```
+
+A small deterministic smoke test is appropriate in a pull request. A full LLM experiment should run
+only after its model, seeds, episode count, and compute budget are approved in the issue.
+
+## 5. Commit and open a pull request
+
+```bash
+git add <changed-files>
+git commit -m "Describe the focused change"
+git push -u origin HEAD
+gh pr create --fill
+```
+
+Link the issue in the pull request (for example, `Closes #123`). Complete the pull request template,
+including exact verification commands and result paths. Report measured evidence separately from
+interpretation and list remaining unknowns.
+
+## Continuing later or from another machine
+
+There is no special slash command and no hidden persistent Codex loop. Resume from GitHub:
+
+```bash
+gh issue list
+gh issue view <issue-number> --comments
+git fetch origin
+git switch <feature-branch>
+git pull --ff-only
+```
+
+Then tell Codex:
+
+```text
+Continue issue #<number>. Read the issue and current branch diff first. Preserve the invariants in
+CONTRIBUTING.md, add a focused FANET test before behavior changes, run the required checks, and update
+the pull request with evidence. Do not run a full LLM experiment unless the issue approves its budget.
+```
